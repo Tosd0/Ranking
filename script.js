@@ -289,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
         // 居中对齐
         const cellAddress = XLSX.utils.encode_cell({ r: worksheetData.length - 1, c: 0 });
+        if (!worksheet[cellAddress]) worksheet[cellAddress] = {};
         if (!worksheet[cellAddress].s) worksheet[cellAddress].s = {};
         worksheet[cellAddress].s.alignment = { horizontal: "center", vertical: "center" };
     
