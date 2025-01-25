@@ -269,30 +269,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 school['监管局均得分']
             ])
         ];
-    
-        const footerText = "排名程序编写：TO 若有数据问题请联系当场裁判。";
-        const footerRow = new Array(worksheetData[0].length).fill(null);
-        footerRow[0] = footerText;
-        worksheetData.push(footerRow);
-    
+
+        const footerLine1 = "排名程序编写：TO";
+        const footerLine2 = "若有数据问题请联系当场裁判";
+
+        const footerRow1 = new Array(worksheetData[0].length).fill(null);
+        footerRow1[0] = footerLine1;
+        worksheetData.push(footerRow1);
+
+        const footerRow2 = new Array(worksheetData[0].length).fill(null);
+        footerRow2[0] = footerLine2;
+        worksheetData.push(footerRow2);
+
+
         const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "排名表");
-    
-        // 合并单元格
-        const mergeCell = {
-            s: { r: worksheetData.length - 1, c: 0 }, // 开始单元格
-            e: { r: worksheetData.length - 1, c: worksheetData[0].length - 1 } // 结束单元格
+
+        // 合并单元格 - 第一行footer
+        let mergeCell1 = {
+            s: { r: worksheetData.length - 2, c: 0 }, // 倒数第二行，开始单元格
+            e: { r: worksheetData.length - 2, c: worksheetData[0].length - 1 } // 倒数第二行，结束单元格
         };
         if (!worksheet['!merges']) worksheet['!merges'] = [];
-        worksheet['!merges'].push(mergeCell);
-    
-        // 居中对齐
-        const cellAddress = XLSX.utils.encode_cell({ r: worksheetData.length - 1, c: 0 });
-        if (!worksheet[cellAddress]) worksheet[cellAddress] = {};
-        if (!worksheet[cellAddress].s) worksheet[cellAddress].s = {};
-        worksheet[cellAddress].s.alignment = { horizontal: "center", vertical: "center" };
-    
+        worksheet['!merges'].push(mergeCell1);
+
+        // 样式 - 第一行footer：居中对齐和加粗
+        let cellAddress1 = XLSX.utils.encode_cell({ r: worksheetData.length - 2, c: 0 });
+        if (!worksheet[cellAddress1]) worksheet[cellAddress1] = {};
+        if (!worksheet[cellAddress1].s) worksheet[cellAddress1].s = {};
+        worksheet[cellAddress1].s.alignment = { horizontal: "center", vertical: "center" };
+        worksheet[cellAddress1].s.font = { bold: true };
+
+        // 合并单元格 - 第二行footer
+        let mergeCell2 = {
+            s: { r: worksheetData.length - 1, c: 0 }, // 最后一行，开始单元格
+            e: { r: worksheetData.length - 1, c: worksheetData[0].length - 1 } // 最后一行，结束单元格
+        };
+        worksheet['!merges'].push(mergeCell2);
+
+
+        // 样式 - 第二行footer：居中对齐和红色
+        let cellAddress2 = XLSX.utils.encode_cell({ r: worksheetData.length - 1, c: 0 });
+        if (!worksheet[cellAddress2]) worksheet[cellAddress2] = {};
+        if (!worksheet[cellAddress2].s) worksheet[cellAddress2].s = {};
+        worksheet[cellAddress2].s.alignment = { horizontal: "center", vertical: "center" };
+        worksheet[cellAddress2].s.font = { color: { rgb: "FFFF0000" } }; // 红色 RGB 值
+
+
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
         const url = URL.createObjectURL(blob);
