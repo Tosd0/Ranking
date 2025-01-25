@@ -269,11 +269,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 school['监管局均得分']
             ])
         ];
-
+    
+        const footerText = "排名程序编写：TO 若有数据问题请联系当场裁判。";
+        const footerRow = new Array(worksheetData[0].length).fill(null);
+        footerRow[0] = footerText;
+        worksheetData.push(footerRow);
+    
         const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "排名表");
-
+    
+        // 合并单元格
+        const mergeCell = {
+            s: { r: worksheetData.length - 1, c: 0 }, // 开始单元格
+            e: { r: worksheetData.length - 1, c: worksheetData[0].length - 1 } // 结束单元格
+        };
+        if (!worksheet['!merges']) worksheet['!merges'] = [];
+        worksheet['!merges'].push(mergeCell);
+    
+        // 居中对齐
+        const cellAddress = XLSX.utils.encode_cell({ r: worksheetData.length - 1, c: 0 });
+        if (!worksheet[cellAddress].s) worksheet[cellAddress].s = {};
+        worksheet[cellAddress].s.alignment = { horizontal: "center", vertical: "center" };
+    
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
         const url = URL.createObjectURL(blob);
@@ -284,13 +302,5 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-    }
-
-    function printRankingTable(rankedSchools) { // 可选的控制台输出函数，用于调试
-        console.log("| 排名 | 学校名称 | 积分 | 小分 | 求生局均得分 | 监管局均得分 |");
-        console.log("| --- | --- | --- | --- | --- | --- |");
-        rankedSchools.forEach(school => {
-            console.log(`| ${school['排名']} | ${school['学校名称']} | ${school['积分']} | ${school['小分']} | ${school['求生局均得分']?.toFixed(2)} | ${school['监管局均得分']?.toFixed(2)} |`);
-        });
     }
 });
