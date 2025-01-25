@@ -1,0 +1,27 @@
+body {
+    font-family: sans-serif;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+#csvFileInput {
+    margin-bottom: 10px;
+}
+
+#processButton {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+#processButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+#message {
+    margin-top: 20px;
+    font-weight: bold;
+}
