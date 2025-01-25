@@ -212,8 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = schoolData[schoolName];
             const appearances = data['出现次数'];
             if (appearances > 0) {
-                data['求生局均得分'] = data['求生总得分'] / appearances;
-                data['监管局均得分'] = data['监管总得分'] / appearances;
+                data['求生局均得分'] = (data['求生总得分'] / appearances).toFixed(3);
+                data['监管局均得分'] = (data['监管总得分'] / appearances).toFixed(3);
             } else {
                 data['求生局均得分'] = 0;
                 data['监管局均得分'] = 0;
@@ -265,8 +265,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 school['学校名称'],
                 school['积分'],
                 school['小分'],
-                school['求生局均得分'],
-                school['监管局均得分']
+                parseFloat(school['求生局均得分']), // 确保作为数值写入Excel，虽然toFixed返回字符串，但这里parseFloat转回数值
+                parseFloat(school['监管局均得分'])  // 确保作为数值写入Excel
             ])
         ];
 
