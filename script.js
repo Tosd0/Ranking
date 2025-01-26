@@ -101,9 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (j_value === 'Yes') {
                 if (k === 5) {
                     if (m < p) {
-                        winner = 'C';
-                    } else if (m > p) {
                         winner = 'B';
+                    } else if (m > p) {
+                        winner = 'C';
                     }
                 } else { // k != 5
                     if (m < p) {
