@@ -65,14 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // *** JavaScript 版本的 calculate_scores 函数 ***
         const school_b = dataRow[1];
         const school_c = dataRow[2];
-        const j_value = dataRow[9];
-        // 使用逻辑或运算符 || 设置默认值为 0，如果 parseInt 结果为 NaN
-        const k = parseInt(dataRow[10]) || 0;
-        const l = parseInt(dataRow[11]) || 0;
-        const m = parseInt(dataRow[12]) || 0;
-        const n_val = parseInt(dataRow[13]) || 0;
-        const o_val = parseInt(dataRow[14]) || 0;
-        const p = parseInt(dataRow[15]) || 0;
+        const j_value = dataRow[7];
+        const k = parseInt(dataRow[8]) || 0;
+        const l = parseInt(dataRow[9]) || 0;
+        const m = parseInt(dataRow[10]) || 0;
+        const n_val = parseInt(dataRow[11]) || 0;
+        const o_val = parseInt(dataRow[12]) || 0;
+        const p = parseInt(dataRow[13]) || 0;
 
         let regulation_score_b, survival_score_b, regulation_score_c, survival_score_c;
 
