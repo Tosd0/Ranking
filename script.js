@@ -241,7 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function rankSchools(schoolData) {
-        // *** JavaScript 版本的 rank_schools 函数 ***
         const rankedSchools = [];
         for (const schoolName in schoolData) {
             const data = schoolData[schoolName];
@@ -259,12 +258,21 @@ document.addEventListener('DOMContentLoaded', () => {
             if (b['积分'] !== a['积分']) {
                 return b['积分'] - a['积分']; // 积分降序
             }
-            return b['小分'] - a['小分'];     // 小分降序
+            if (b['小分'] !== a['小分']) {
+                return b['小分'] - a['小分'];     // 小分降序
+            }
+            if (b['求生局均得分'] !== a['求生局均得分']) {
+                return b['求生局均得分'] - a['求生局均得分']; // 求生局均得分降序
+            }
+            return b['监管局均得分'] - a['监管局均得分']; // 监管局均得分降序
         });
 
         let rank = 1;
         for (let i = 0; i < rankedSchools.length; i++) {
-            if (i > 0 && (rankedSchools[i]['积分'] !== rankedSchools[i - 1]['积分'] || rankedSchools[i]['小分'] !== rankedSchools[i - 1]['小分'])) {
+            if (i > 0 && (rankedSchools[i]['积分'] !== rankedSchools[i - 1]['积分'] ||
+                rankedSchools[i]['小分'] !== rankedSchools[i - 1]['小分'] ||
+                rankedSchools[i]['求生局均得分'] !== rankedSchools[i - 1]['求生局均得分'] ||
+                rankedSchools[i]['监管局均得分'] !== rankedSchools[i - 1]['监管局均得分'])) {
                 rank = i + 1;
             }
             rankedSchools[i]['排名'] = rank;
