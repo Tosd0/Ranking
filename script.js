@@ -149,18 +149,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // *** JavaScript 版本的 process_csv 函数 ***
         const schoolData = {};
         const rowResults = [];
-
+    
         for (let i = 1; i < csvData.length; i++) { // 从第二行开始，跳过可能的 header
             const row = csvData[i];
-            if (row.length < 16) {
+            if (row.length < 14) {
                 console.warn(`警告: CSV 文件行数据列数不足，跳过该行: ${row}`);
                 continue;
             }
-
+    
+            // 检查 E 列的值是否为“已结束”
+            if (row[4] !== "已结束") {
+                continue;
+            }
+    
             try {
                 const result = calculateScores(row);
                 rowResults.push(result);
-
+    
                 const school_b = result.school_b;
                 const school_c = result.school_c;
                 const winner = result.winner;
@@ -168,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const survival_score_b = result.survival_score_b;
                 const regulation_score_c = result.regulation_score_c;
                 const survival_score_c = result.survival_score_c;
-
+    
                 // 初始化学校数据
                 if (!schoolData[school_b]) {
                     schoolData[school_b] = {
@@ -193,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (winner === 'B') {
                     schoolData[school_b]['积分'] += 3;
                 }
-
+    
                 // 对 school_c 做同样的处理
                 if (!schoolData[school_c]) {
                     schoolData[school_c] = {
@@ -217,12 +222,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (winner === 'C') {
                     schoolData[school_c]['积分'] += 3;
                 }
-
+    
             } catch (e) {
                 console.error(`处理行时出错 (学校 B: ${row[1]}, 学校 C: ${row[2]}): ${e}`);
             }
         }
-
+    
         // 计算平均得分
         for (const schoolName in schoolData) {
             const data = schoolData[schoolName];
@@ -235,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 data['监管局均得分'] = 0;
             }
         }
-
+    
         return schoolData;
     }
 
