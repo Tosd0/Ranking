@@ -66,12 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const school_b = dataRow[1];
         const school_c = dataRow[2];
         const j_value = dataRow[9];
-        const k = parseInt(dataRow[10]);
-        const l = parseInt(dataRow[11]);
-        const m = parseInt(dataRow[12]);
-        const n_val = parseInt(dataRow[13]);
-        const o_val = parseInt(dataRow[14]);
-        const p = parseInt(dataRow[15]);
+        // 使用逻辑或运算符 || 设置默认值为 0，如果 parseInt 结果为 NaN
+        const k = parseInt(dataRow[10]) || 0;
+        const l = parseInt(dataRow[11]) || 0;
+        const m = parseInt(dataRow[12]) || 0;
+        const n_val = parseInt(dataRow[13]) || 0;
+        const o_val = parseInt(dataRow[14]) || 0;
+        const p = parseInt(dataRow[15]) || 0;
 
         let regulation_score_b, survival_score_b, regulation_score_c, survival_score_c;
 
@@ -149,24 +150,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // *** JavaScript 版本的 process_csv 函数 ***
         const schoolData = {};
         const rowResults = [];
-    
-        for (let i = 1; i < csvData.length; i++) { // 从第二行开始，跳过可能的 header (假设第一行是 header)
+
+        for (let i = 1; i < csvData.length; i++) { // 从第二行开始，跳过可能的 header
             const row = csvData[i];
             if (row.length < 16) {
                 console.warn(`警告: CSV 文件行数据列数不足，跳过该行: ${row}`);
                 continue;
             }
-    
-            const gameStatus = row[4]; // 获取 "比赛状态" 列 (索引 4)
-            if (gameStatus === '未开始') {
-                console.log(`跳过未开始的比赛: ${row[1]} vs ${row[2]}`); // 可选: 记录跳过的比赛
-                continue; // 如果比赛状态是 "未开始"，跳过当前行
-            }
-    
+
             try {
                 const result = calculateScores(row);
                 rowResults.push(result);
-    
+
                 const school_b = result.school_b;
                 const school_c = result.school_c;
                 const winner = result.winner;
@@ -174,7 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const survival_score_b = result.survival_score_b;
                 const regulation_score_c = result.regulation_score_c;
                 const survival_score_c = result.survival_score_c;
-    
+
+                // 初始化学校数据
                 if (!schoolData[school_b]) {
                     schoolData[school_b] = {
                         '积分': 0,
@@ -184,14 +180,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         '出现次数': 0
                     };
                 }
-                schoolData[school_b]['小分总和'] += result.small_score_b;
-                schoolData[school_b]['求生总得分'] += survival_score_b;
-                schoolData[school_b]['监管总得分'] += regulation_score_b;
+                // 进行累加，并在累加前检查是否为 NaN
+                if (!isNaN(result.small_score_b)) {
+                    schoolData[school_b]['小分总和'] += result.small_score_b;
+                }
+                if (!isNaN(survival_score_b)) {
+                    schoolData[school_b]['求生总得分'] += survival_score_b;
+                }
+                if (!isNaN(regulation_score_b)) {
+                    schoolData[school_b]['监管总得分'] += regulation_score_b;
+                }
                 schoolData[school_b]['出现次数'] += 1;
                 if (winner === 'B') {
                     schoolData[school_b]['积分'] += 3;
                 }
-    
+
+                // 对 school_c 做同样的处理
                 if (!schoolData[school_c]) {
                     schoolData[school_c] = {
                         '积分': 0,
@@ -201,19 +205,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         '出现次数': 0
                     };
                 }
-                schoolData[school_c]['小分总和'] += result.small_score_c;
-                schoolData[school_c]['求生总得分'] += survival_score_c;
-                schoolData[school_c]['监管总得分'] += regulation_score_c;
+                if (!isNaN(result.small_score_c)) {
+                    schoolData[school_c]['小分总和'] += result.small_score_c;
+                }
+                if (!isNaN(survival_score_c)) {
+                    schoolData[school_c]['求生总得分'] += survival_score_c;
+                }
+                if (!isNaN(regulation_score_c)) {
+                    schoolData[school_c]['监管总得分'] += regulation_score_c;
+                }
                 schoolData[school_c]['出现次数'] += 1;
                 if (winner === 'C') {
                     schoolData[school_c]['积分'] += 3;
                 }
-    
+
             } catch (e) {
                 console.error(`处理行时出错 (学校 B: ${row[1]}, 学校 C: ${row[2]}): ${e}`);
             }
         }
-    
+
+        // 计算平均得分
         for (const schoolName in schoolData) {
             const data = schoolData[schoolName];
             const appearances = data['出现次数'];
@@ -221,11 +232,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 data['求生局均得分'] = (data['求生总得分'] / appearances).toFixed(3);
                 data['监管局均得分'] = (data['监管总得分'] / appearances).toFixed(3);
             } else {
-                data['求生局均得分'] = 0;
+                data['求生局均得分'] = 0; // 出现次数为 0 时，均分设为 0
                 data['监管局均得分'] = 0;
             }
         }
-    
+
         return schoolData;
     }
 
@@ -271,8 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 school['学校名称'],
                 school['积分'],
                 school['小分'],
-                parseFloat(school['求生局均得分']), // 确保作为数值写入Excel，虽然toFixed返回字符串，但这里parseFloat转回数值
-                parseFloat(school['监管局均得分'])  // 确保作为数值写入Excel
+                parseFloat(school['求生局均得分']),
+                parseFloat(school['监管局均得分'])
             ])
         ];
 
@@ -286,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const footerRow2 = new Array(worksheetData[0].length).fill(null);
         footerRow2[0] = footerLine2;
         worksheetData.push(footerRow2);
-
 
         const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
         const workbook = XLSX.utils.book_new();
@@ -314,14 +324,12 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         worksheet['!merges'].push(mergeCell2);
 
-
         // 样式 - 第二行footer：居中对齐和红色
         let cellAddress2 = XLSX.utils.encode_cell({ r: worksheetData.length - 1, c: 0 });
         if (!worksheet[cellAddress2]) worksheet[cellAddress2] = {};
         if (!worksheet[cellAddress2].s) worksheet[cellAddress2].s = {};
         worksheet[cellAddress2].s.alignment = { horizontal: "center", vertical: "center" };
         worksheet[cellAddress2].s.font = { color: { rgb: "FFFF0000" } }; // 红色 RGB 值
-
 
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
