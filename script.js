@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             winner = 'C';
         } else { // 小分相等时
             if (j_value === 'Yes') {
-                if (l === 5) {
+                if (k === 5) {
                     if (m < p) {
                         winner = 'C';
                     } else if (m > p) {
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             } else if (j_value === 'No') {
-                if (k === 5) {
+                if (l === 5) {
                     if (m < p) {
                         winner = 'C';
                     } else if (m > p) {
