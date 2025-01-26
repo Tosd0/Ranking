@@ -73,24 +73,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const o_val = parseInt(dataRow[12]) || 0;
         const p = parseInt(dataRow[13]) || 0;
 
-        let regulation_score_b, survival_score_b, regulation_score_c, survival_score_c;
+        let hunter_score_b, survivor_score_b, hunter_score_c, survivor_score_c;
 
         if (j_value === 'Yes') {
-            regulation_score_b = k;
-            survival_score_b = n_val;
-            regulation_score_c = o_val;
-            survival_score_c = l;
+            hunter_score_b = k;
+            survivor_score_b = n_val;
+            hunter_score_c = o_val;
+            survivor_score_c = l;
         } else if (j_value === 'No') {
-            regulation_score_b = n_val;
-            survival_score_b = k;
-            regulation_score_c = l;
-            survival_score_c = o_val;
+            hunter_score_b = n_val;
+            survivor_score_b = k;
+            hunter_score_c = l;
+            survivor_score_c = o_val;
         } else {
             throw new Error(`J列的值 '${j_value}' 既不是 'Yes' 也不是 'No'，请检查数据。`);
         }
 
-        const small_score_b = regulation_score_b + survival_score_b;
-        const small_score_c = regulation_score_c + survival_score_c;
+        const small_score_b = hunter_score_b + survivor_score_b;
+        const small_score_c = hunter_score_c + survivor_score_c;
 
         let winner = '';
         if (small_score_b > small_score_c) {
@@ -99,11 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
             winner = 'C';
         } else { // 小分相等时
             if (j_value === 'Yes') {
-                if (k === 5) {
+                if (l === 5) {
                     if (m < p) {
-                        winner = 'B';
-                    } else if (m > p) {
                         winner = 'C';
+                    } else if (m > p) {
+                        winner = 'B';
                     }
                 } else { // k != 5
                     if (m < p) {
@@ -135,10 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
             school_b: school_b,
             school_c: school_c,
             j_value: j_value,
-            regulation_score_b: regulation_score_b,
-            survival_score_b: survival_score_b,
-            regulation_score_c: regulation_score_c,
-            survival_score_c: survival_score_c,
+            hunter_score_b: hunter_score_b,
+            survivor_score_b: survivor_score_b,
+            hunter_score_c: hunter_score_c,
+            survivor_score_c: survivor_score_c,
             small_score_b: small_score_b,
             small_score_c: small_score_c,
             winner: winner
@@ -169,10 +169,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const school_b = result.school_b;
                 const school_c = result.school_c;
                 const winner = result.winner;
-                const regulation_score_b = result.regulation_score_b;
-                const survival_score_b = result.survival_score_b;
-                const regulation_score_c = result.regulation_score_c;
-                const survival_score_c = result.survival_score_c;
+                const hunter_score_b = result.hunter_score_b;
+                const survivor_score_b = result.survivor_score_b;
+                const hunter_score_c = result.hunter_score_c;
+                const survivor_score_c = result.survivor_score_c;
     
                 // 初始化学校数据
                 if (!schoolData[school_b]) {
@@ -188,11 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!isNaN(result.small_score_b)) {
                     schoolData[school_b]['小分总和'] += result.small_score_b;
                 }
-                if (!isNaN(survival_score_b)) {
-                    schoolData[school_b]['求生总得分'] += survival_score_b;
+                if (!isNaN(survivor_score_b)) {
+                    schoolData[school_b]['求生总得分'] += survivor_score_b;
                 }
-                if (!isNaN(regulation_score_b)) {
-                    schoolData[school_b]['监管总得分'] += regulation_score_b;
+                if (!isNaN(hunter_score_b)) {
+                    schoolData[school_b]['监管总得分'] += hunter_score_b;
                 }
                 schoolData[school_b]['出现次数'] += 1;
                 if (winner === 'B') {
@@ -212,11 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!isNaN(result.small_score_c)) {
                     schoolData[school_c]['小分总和'] += result.small_score_c;
                 }
-                if (!isNaN(survival_score_c)) {
-                    schoolData[school_c]['求生总得分'] += survival_score_c;
+                if (!isNaN(survivor_score_c)) {
+                    schoolData[school_c]['求生总得分'] += survivor_score_c;
                 }
-                if (!isNaN(regulation_score_c)) {
-                    schoolData[school_c]['监管总得分'] += regulation_score_c;
+                if (!isNaN(hunter_score_c)) {
+                    schoolData[school_c]['监管总得分'] += hunter_score_c;
                 }
                 schoolData[school_c]['出现次数'] += 1;
                 if (winner === 'C') {
