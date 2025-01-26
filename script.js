@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = schoolData[schoolName];
             rankedSchools.push({
                 '排名': 0, // 初始排名为 0
-                '学校名称': schoolName,
+                '学校/队伍名称': schoolName,
                 '积分': data['积分'],
                 '小分': data['小分总和'],
                 '求生局均得分': data['求生局均得分'],
@@ -283,10 +283,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function outputRankingToExcel(rankedSchools) {
         // *** JavaScript 版本的 output_ranking_to_excel 函数 ***
         const worksheetData = [
-            ["排名", "学校名称", "积分", "小分", "求生局均得分", "监管局均得分"], // Header row
+            ["排名", "学校/队伍名称", "积分", "小分", "求生局均得分", "监管局均得分"], // Header row
             ...rankedSchools.map(school => [ // 数据行
                 school['排名'],
-                school['学校名称'],
+                school['学校/队伍名称'],
                 school['积分'],
                 school['小分'],
                 parseFloat(school['求生局均得分']),
