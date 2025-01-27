@@ -33,9 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const csvData = results.data;
                     if (csvData && csvData.length > 0) {
                         try {
-                            const schoolData = processCSV(csvData);
+                            const {schoolData, roundData} = processCSV(csvData); // 修改这里，获取 roundData
                             const rankedSchools = rankSchools(schoolData);
-                            outputRankingToExcel(rankedSchools);
+                            outputRankingToExcel(rankedSchools, roundData); // 传递 roundData
                             messageDiv.textContent = "Excel 文件生成成功，已开始下载。";
                         } catch (error) {
                             console.error("处理 CSV 数据出错:", error);
@@ -149,23 +149,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // *** JavaScript 版本的 process_csv 函数 ***
         const schoolData = {};
         const rowResults = [];
-    
+        const roundData = {}; // 新增：用于存储每个学校的场次信息
+
         for (let i = 1; i < csvData.length; i++) { // 从第二行开始，跳过可能的 header
             const row = csvData[i];
             if (row.length < 14) {
                 console.warn(`警告: CSV 文件行数据列数不足，跳过该行: ${row}`);
                 continue;
             }
-    
+
             // 检查 E 列的值是否为“已结束”
             if (row[4] !== "已结束") {
                 continue;
             }
-    
+
             try {
                 const result = calculateScores(row);
                 rowResults.push(result);
-    
+
                 const school_b = result.school_b;
                 const school_c = result.school_c;
                 const winner = result.winner;
@@ -173,8 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const survivor_score_b = result.survivor_score_b;
                 const hunter_score_c = result.hunter_score_c;
                 const survivor_score_c = result.survivor_score_c;
-    
-                // 初始化学校数据
+
+                // 初始化学校数据和场次数据
                 if (!schoolData[school_b]) {
                     schoolData[school_b] = {
                         '积分': 0,
@@ -183,7 +184,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         '监管总得分': 0,
                         '出现次数': 0
                     };
+                    roundData[school_b] = 0; // 初始化场次
                 }
+                if (!schoolData[school_c]) {
+                    schoolData[school_c] = {
+                        '积分': 0,
+                        '小分总和': 0,
+                        '求生总得分': 0,
+                        '监管总得分': 0,
+                        '出现次数': 0
+                    };
+                    roundData[school_c] = 0; // 初始化场次
+                }
+
+                // 累加场次
+                roundData[school_b] += 1;
+                roundData[school_c] += 1;
+
                 // 进行累加，并在累加前检查是否为 NaN
                 if (!isNaN(result.small_score_b)) {
                     schoolData[school_b]['小分总和'] += result.small_score_b;
@@ -198,17 +215,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (winner === 'B') {
                     schoolData[school_b]['积分'] += 3;
                 }
-    
+
                 // 对 school_c 做同样的处理
-                if (!schoolData[school_c]) {
-                    schoolData[school_c] = {
-                        '积分': 0,
-                        '小分总和': 0,
-                        '求生总得分': 0,
-                        '监管总得分': 0,
-                        '出现次数': 0
-                    };
-                }
+
                 if (!isNaN(result.small_score_c)) {
                     schoolData[school_c]['小分总和'] += result.small_score_c;
                 }
@@ -222,12 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (winner === 'C') {
                     schoolData[school_c]['积分'] += 3;
                 }
-    
+
             } catch (e) {
                 console.error(`处理行时出错 (学校 B: ${row[1]}, 学校 C: ${row[2]}): ${e}`);
             }
         }
-    
+
         // 计算平均得分
         for (const schoolName in schoolData) {
             const data = schoolData[schoolName];
@@ -240,8 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 data['监管局均得分'] = 0;
             }
         }
-    
-        return schoolData;
+
+        return {schoolData, roundData};
     }
 
     function rankSchools(schoolData) {
@@ -285,17 +294,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return rankedSchools;
     }
 
-    function outputRankingToExcel(rankedSchools) {
+    function outputRankingToExcel(rankedSchools, roundData) {
         // *** JavaScript 版本的 output_ranking_to_excel 函数 ***
         const worksheetData = [
-            ["排名", "学校/队伍名称", "积分", "小分", "求生局均得分", "监管局均得分"], // Header row
+            ["排名", "学校/队伍名称", "积分", "小分", "求生局均得分", "监管局均得分", "场次"], // Header row，添加“场次”
             ...rankedSchools.map(school => [ // 数据行
                 school['排名'],
                 school['学校/队伍名称'],
                 school['积分'],
                 school['小分'],
                 parseFloat(school['求生局均得分']),
-                parseFloat(school['监管局均得分'])
+                parseFloat(school['监管局均得分']),
+                roundData[school['学校/队伍名称']] // 添加场次数据
             ])
         ];
 
