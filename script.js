@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 const csvFileInput = document.getElementById('csvFileInput');
 const processButton = document.getElementById('processButton');            // 原按钮
-const generateGroupedButton = document.getElementById('generateGroupedButton'); // 新按钮
+const groupedButton = document.getElementById('groupedButton'); // 新按钮
 const messageDiv = document.getElementById('message');
 
 let csvDataCache = null; // 用于存储解析后的原始 CSV 数据，以便两个按钮都能使用
@@ -10,11 +10,11 @@ let csvDataCache = null; // 用于存储解析后的原始 CSV 数据，以便�
 csvFileInput.addEventListener('change', () => {
     if (csvFileInput.files.length > 0) {
         processButton.disabled = false;
-        generateGroupedButton.disabled = false;
+        groupedButton.disabled = false;
         messageDiv.textContent = "";
     } else {
         processButton.disabled = true;
-        generateGroupedButton.disabled = true;
+        groupedButton.disabled = true;
     }
 });
 
@@ -28,7 +28,7 @@ processButton.addEventListener('click', () => {
 
     messageDiv.textContent = "正在处理 CSV 文件（原积分榜逻辑）...";
     processButton.disabled = true;
-    generateGroupedButton.disabled = true;
+    groupedButton.disabled = true;
 
     const reader = new FileReader();
     reader.onload = function(event) {
@@ -53,13 +53,13 @@ processButton.addEventListener('click', () => {
                     messageDiv.textContent = "CSV 文件内容为空或解析失败。";
                 }
                 processButton.disabled = false;
-                generateGroupedButton.disabled = false;
+                groupedButton.disabled = false;
             },
             error: function(error) {
                 console.error("CSV 解析错误:", error);
                 messageDiv.textContent = "CSV 文件解析错误，请检查文件格式。";
                 processButton.disabled = false;
-                generateGroupedButton.disabled = false;
+                groupedButton.disabled = false;
             }
         });
     };
@@ -67,13 +67,13 @@ processButton.addEventListener('click', () => {
         console.error("文件读取错误");
         messageDiv.textContent = "文件读取错误，请重试。";
         processButton.disabled = false;
-        generateGroupedButton.disabled = false;
+        groupedButton.disabled = false;
     };
     reader.readAsText(file, 'utf-8');
 });
 
 // ======= 新按钮逻辑，生成并下载「已分组表格」 =======
-generateGroupedButton.addEventListener('click', () => {
+groupedButton.addEventListener('click', () => {
     const file = csvFileInput.files[0];
     if (!file) {
         messageDiv.textContent = "请先选择 CSV 文件。";
@@ -82,7 +82,7 @@ generateGroupedButton.addEventListener('click', () => {
 
     messageDiv.textContent = "正在处理 CSV 文件（分组表格逻辑）...";
     processButton.disabled = true;
-    generateGroupedButton.disabled = true;
+    groupedButton.disabled = true;
 
     const reader = new FileReader();
     reader.onload = function(event) {
@@ -109,13 +109,13 @@ generateGroupedButton.addEventListener('click', () => {
                     messageDiv.textContent = "CSV 文件内容为空或解析失败。";
                 }
                 processButton.disabled = false;
-                generateGroupedButton.disabled = false;
+                groupedButton.disabled = false;
             },
             error: function(error) {
                 console.error("CSV 解析错误:", error);
                 messageDiv.textContent = "CSV 文件解析错误，请检查文件格式。";
                 processButton.disabled = false;
-                generateGroupedButton.disabled = false;
+                groupedButton.disabled = false;
             }
         });
     };
@@ -123,7 +123,7 @@ generateGroupedButton.addEventListener('click', () => {
         console.error("文件读取错误");
         messageDiv.textContent = "文件读取错误，请重试。";
         processButton.disabled = false;
-        generateGroupedButton.disabled = false;
+        groupedButton.disabled = false;
     };
     reader.readAsText(file, 'utf-8');
 });
